@@ -58,7 +58,23 @@ fu.ui = (function() {
                 return window;
             }
             return loadingView;
+        },
+        formatDateYearTime:function(date) {
+            var datestr = date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear();
+            var hours = date.getHours();
+            var mins = date.getMinutes();
+            if (hours >= 12) {
+                datestr += ' ' + (hours == 12 ? hours : hours - 12) + ':' + (mins < 10 ? ('0' + mins) : mins) + ' PM';
+            }
+            else {
+                datestr += ' ' + hours + ':' + (mins < 10 ? ('0' + mins) : mins) + ' AM';
+            }
+            return datestr;
         }
     }
     return ui;
 })();
+
+Ti.include(
+    'tifu/ui/pull_to_refresh.js'
+);

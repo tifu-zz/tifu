@@ -1,5 +1,5 @@
 var fu = {};
 
 Ti.include(
-    'tifu/ui.js'
+    'tifu/ui/ui.js'
 );
