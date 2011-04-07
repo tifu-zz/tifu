@@ -23,6 +23,7 @@
             zIndex:10,
             visible:false
         });
+        scrollableView.views = imageViews;
         var loadingIndicator = fu.ui.createLoadingView({modal:true});
         imageScroller.add(tempImageView);
         imageScroller.add(scrollableView);
