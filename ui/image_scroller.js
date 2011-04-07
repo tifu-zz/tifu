@@ -30,7 +30,6 @@
 
         scrollableView.addEventListener('scroll', function(e) {
             var page = e.currentPage;
-            //Ti.API.info("sv1 page = " + page + " lastPage = " + lastPage + " index = " + index);
             if (lastPage === page) {
                 return;
             }
@@ -41,7 +40,6 @@
             } else {
                 index--;
             }
-            //Ti.API.info("new index = "+index);
             if (page == 0 || page == 2) {
                 shiftImages();
             }
@@ -49,13 +47,8 @@
         });
 
         function shiftImages() {
-            Ti.API.info("shiftImages index = "+index + " url count = "+urls.length);
             tempImageView.image = urls[index];
             if (index > 0 && index < urls.length - 1) {
-
-
-                Ti.API.info("YEP");
-
                 lastPage = 1;
 
                 tempImageView.animate({zIndex:11,visible:true,duration:0});
@@ -87,7 +80,6 @@
                 }
                 var end = (urls.length - start < 3) ? urls.length : start + 3;
 
-                Ti.API.info("start = " + start + " end = " + end);
                 for (var i = start, j = 0; i < end; i++,j++) {
                     imageViews[j].image = urls[i];
                 }
@@ -101,11 +93,9 @@
         }
 
         imageScroller.append = function(_urls) {
-            Ti.API.info("apppend " + _urls.length);
             for (var i = 0,count = _urls.length; i < count; i++) {
                 urls.push(_urls[i]);
             }
-            Ti.API.info("new count = " + urls.length);
             if (imageViews.length < 3) {
                 for (var j = 0; (urls.length > j) && (imageViews.length < (j + 1)) && (imageViews.length < 3); j++) {
                     imageViews.push(Ti.UI.createImageView({
