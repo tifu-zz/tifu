@@ -1,6 +1,6 @@
 fu.model = (function() {
     return {
-    }
+    };
 })();
 
 Ti.include(

@@ -29,7 +29,7 @@ fu.model.http = (function() {
         http.status = xhr.status;
         onload(xhr.responseText);
         queue.pull();
-    }
+    };
 
     xhr.onerror = function(e) {
         if (http.failure) {
@@ -43,7 +43,7 @@ fu.model.http = (function() {
         if (http.complete) {
             http.complete();
         }
-    }
+    };
 
     var handleResponse = function(responseString) {
         var params = http.params;
@@ -55,12 +55,12 @@ fu.model.http = (function() {
         } else if (format === 'text') {
             handleTextResponse(responseString);
         }
-    }
+    };
 
     var handleTextResponse = function(textString) {
         http.text = textString;
         cacheIfGetOk(textString);
-    }
+    };
 
     var handleJsonResponse = function(jsonString) {
         Ti.API.info("!!onload json = " + jsonString);
