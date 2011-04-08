@@ -8,7 +8,8 @@ fu.model.http = (function() {
     var http = {
         xhr:xhr,
         defaultExpire:60,
-        defaultUseCache:false
+        defaultUseCache:false,
+        defaultFormat:'text'
     };
 
     var queue = fu.lib.createQueue(
@@ -46,11 +47,19 @@ fu.model.http = (function() {
 
     var handleResponse = function(responseString) {
         var params = http.params;
-        if (params.format === 'json') {
+        var format = fu.lib.defined(params.format, http.defaultFormat);
+        if (format === 'json') {
             handleJsonResponse(responseString);
-        } else if (params.format === 'xml') {
+        } else if (format === 'xml') {
             handleXmlResponse(responseString);
+        } else if (format === 'text') {
+            handleTextResponse(responseString);
         }
+    }
+
+    var handleTextResponse = function(textString) {
+        http.text = textString;
+        cacheIfGetOk(textString);
     }
 
     var handleJsonResponse = function(jsonString) {
