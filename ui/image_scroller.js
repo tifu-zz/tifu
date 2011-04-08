@@ -1,13 +1,13 @@
 (function() {
     fu.ui.createImageScroller = function(options) {
         options = options || {};
-        var urls = fu.lib.undefinedOr(options.urls,[]);
-        var defaultImage = fu.lib.undefinedOr(options.defaultImage,'images/loading.png');
-        var backgroundColor = fu.lib.undefinedOr(options.backgroundColor,'#000');
+        var urls = fu.lib.defined(options.urls,[]);
+        var defaultImage = fu.lib.defined(options.defaultImage,'images/loading.png');
+        var backgroundColor = fu.lib.defined(options.backgroundColor,'#000');
         var index = 0;
         var lastPage = 0;
-        var height = fu.lib.undefinedOr(options.height, 320);
-        var top = fu.lib.undefinedOr(options.top,0);
+        var height = fu.lib.defined(options.height, 320);
+        var top = fu.lib.defined(options.top,0);
 
         var imageScroller = Ti.UI.createView({
             top:top,

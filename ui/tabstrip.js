@@ -3,15 +3,15 @@
     fu.ui.createTabStrip = function(options) {
         options = options || {};
         var params = {
-            labels: fu.lib.undefinedOr(options.labels, []),
-            onselect: fu.lib.undefinedOr(options.onselect, null),
-            top: fu.lib.undefinedOr(options.top, .1),
-            height: fu.lib.undefinedOr(options.height, 40),
-            backgroundColor: fu.lib.undefinedOr(options.backgroundColor, '#000'),
-            gradientColor: fu.lib.undefinedOr(options.gradientColor, '#444'),
-            selectedColor: fu.lib.undefinedOr(options.selectedColor, '#fff'),
-            unselectedColor: fu.lib.undefinedOr(options.unselectedColor, '#999'),
-            fontSize: fu.lib.undefinedOr(options.fontSize, 14)
+            labels: fu.lib.defined(options.labels, []),
+            onselect: fu.lib.defined(options.onselect, null),
+            top: fu.lib.defined(options.top, .1),
+            height: fu.lib.defined(options.height, 40),
+            backgroundColor: fu.lib.defined(options.backgroundColor, '#000'),
+            gradientColor: fu.lib.defined(options.gradientColor, '#444'),
+            selectedColor: fu.lib.defined(options.selectedColor, '#fff'),
+            unselectedColor: fu.lib.defined(options.unselectedColor, '#999'),
+            fontSize: fu.lib.defined(options.fontSize, 14)
         }
 
         var labelViews = [];

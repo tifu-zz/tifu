@@ -1,6 +1,7 @@
 var fu = {};
 
 Ti.include(
-    'tifu/ui/ui.js',
-    'tifu/lib/lib.js'
+        'tifu/lib/lib.js',
+        'tifu/ui/ui.js',
+        'tifu/model/model.js'
 );
