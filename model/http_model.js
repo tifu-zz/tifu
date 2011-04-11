@@ -34,6 +34,11 @@ fu.model.http = (function() {
     xhr.onerror = function(e) {
         if (http.failure) {
             http.failure(e);
+            try {
+                http.failure(e);
+            } catch(err) {
+                warnAboutException(err);
+            }
         }
         queue.pull();
     };
@@ -41,7 +46,11 @@ fu.model.http = (function() {
     var onload = function(responseString) {
         handleResponse(responseString);
         if (http.complete) {
-            http.complete();
+            try {
+                http.complete();
+            } catch (err) {
+                warnAboutException(err);
+            }
         }
     };
 
@@ -85,6 +94,12 @@ fu.model.http = (function() {
 
     var send = function(params) {
         queue.push(params);
+    };
+    
+    var warnAboutException = function(err) {
+        Ti.API.warn('Exception raised in callback. '+
+                    'Try to ensure that exceptions are handled within your callback.\n'+
+                    'Exception was:\n'+err);
     };
 
     http.get = function(params) {
