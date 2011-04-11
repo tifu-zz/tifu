@@ -1,7 +1,7 @@
 fu.ui = (function() {
     var ui = {
         createLoadingView:function(options) {
-            var options = options || {};
+            options = options || {};
             var modal = options.modal || false;
             var top = options.top || 102;
 
@@ -36,12 +36,12 @@ fu.ui = (function() {
                 loadingLabel.show();
                 activityIndicator.show();
                 loadingView.show();
-            }
+            };
             loadingView.hideLoading = function() {
                 loadingLabel.hide();
                 activityIndicator.hide();
                 loadingView.hide();
-            }
+            };
             if (modal) {
                 var window = Titanium.UI.createWindow();
                 window.add(loadingView);
@@ -49,7 +49,7 @@ fu.ui = (function() {
                 window.showLoading = function() {
                     window.open();
                     loadingView.showLoading();
-                }
+                };
 
                 window.hideLoading = function() {
                     loadingView.hideLoading();
@@ -71,7 +71,7 @@ fu.ui = (function() {
             }
             return datestr;
         }
-    }
+    };
     return ui;
 })();
 

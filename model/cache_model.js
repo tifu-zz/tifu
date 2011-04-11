@@ -37,7 +37,7 @@ fu.model.cache = (function() {
     cache.remove = function(key) {
         Titanium.API.info('REMOVING ' + key + ' from cache');
         Titanium.App.Properties.removeProperty(key);
-    }
+    };
 
     cache.removeAll = function() {
         Titanium.API.info('REMOVING ALL');
@@ -45,7 +45,7 @@ fu.model.cache = (function() {
         for (var c = 0; c < props.length; c++) {
             cache.remove(props[c]);
         }
-    }
+    };
 
     cache.clean = function() {
         Titanium.API.info('CLEAN');

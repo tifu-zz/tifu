@@ -98,16 +98,17 @@
             var offset = e.contentOffset.y;
             //Ti.API.info("scroll y offset = "+offset + " dragging = "+e.dragging + " loading="+loading);
             if (e.dragging && !loading) {
+				var t;
                 if (!pulling && offset <= -65.0) {
                     pulling = true;
-                    var t = Ti.UI.create2DMatrix();
+                    t = Ti.UI.create2DMatrix();
                     t = t.rotate(-180);
                     arrow.animate({transform:t,duration:50});
                     statusLabel.text = "Release to update...";
                 }
                 else if (pulling && offset > -65.0 && offset < 0) {
                     pulling = false;
-                    var t = Ti.UI.create2DMatrix();
+                    t = Ti.UI.create2DMatrix();
                     arrow.animate({transform:t,duration:50});
                     statusLabel.text = "Pull down to update...";
                 }
@@ -125,5 +126,5 @@
                 tableView.beginLoading();
             }
         });
-    }
+    };
 })();

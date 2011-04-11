@@ -86,7 +86,7 @@
                 scrollableView.currentPage = lastPage;
                 fireScrollEvent();
             }
-        }
+        };
 
         function fireScrollEvent() {
             imageScroller.fireEvent('scrolled', {index:index});
@@ -115,17 +115,17 @@
 
         imageScroller.count = function() {
             return urls.length;
-        }
+        };
 
         imageScroller.showLoading = function() {
             loadingIndicator.showLoading();
-        }
+        };
 
         imageScroller.hideLoading = function() {
             loadingIndicator.hideLoading();
-        }
+        };
 
         return imageScroller;
-    }
+    };
 
 })();

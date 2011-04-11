@@ -5,14 +5,14 @@
         var params = {
             labels: fu.lib.defined(options.labels, []),
             onselect: fu.lib.defined(options.onselect, null),
-            top: fu.lib.defined(options.top, .1),
+            top: fu.lib.defined(options.top, 0.1),
             height: fu.lib.defined(options.height, 40),
             backgroundColor: fu.lib.defined(options.backgroundColor, '#000'),
             gradientColor: fu.lib.defined(options.gradientColor, '#444'),
             selectedColor: fu.lib.defined(options.selectedColor, '#fff'),
             unselectedColor: fu.lib.defined(options.unselectedColor, '#999'),
             fontSize: fu.lib.defined(options.fontSize, 14)
-        }
+        };
 
         var labelViews = [];
         var lastSelectedLabel = null;
@@ -75,25 +75,26 @@
         containerView.labels = function(labels) {
             params.labels = labels;
             resetLabels();
-        }
+        };;
 
         containerView.selectTab = function(index) {
             select(labelViews[index]);
-        }
+        };
 
         function resetLabels() {
             totalWidth = 0;
             labelViews = [];
             lastSelectedLabel = null;
             var oldLabels = scrollView.children;
+			var i, count;
             if (oldLabels) {
-                for (var i = 0,count = oldLabels.length; i < count; i++) {
+                for (i = 0,count = oldLabels.length; i < count; i++) {
                     scrollView.remove(oldLabels[i]);
                 }
             }
 
             var labels = params.labels;
-            for (var i = 0,count = labels.length; i < count; i++) {
+            for (i = 0,count = labels.length; i < count; i++) {
                 var button = createButton(labels[i], i);
                 scrollView.add(button);
             }
@@ -135,7 +136,7 @@
                 if (lastSelectedLabel) {
                     showAsUnSlected(lastSelectedLabel);
                 }
-                showAsSelected(label)
+                showAsSelected(label);
                 if (params.onselect) {
                     params.onselect(label.index);
                 }
@@ -155,6 +156,6 @@
 
         resetLabels();
         return containerView;
-    }
+    };
 
 })();
