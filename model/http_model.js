@@ -33,7 +33,6 @@ fu.model.http = (function() {
 
     xhr.onerror = function(e) {
         if (http.failure) {
-            http.failure(e);
             try {
                 http.failure(e);
             } catch(err) {
