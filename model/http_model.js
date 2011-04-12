@@ -9,29 +9,52 @@ fu.model.http = (function() {
         xhr:xhr,
         defaultExpire:60,
         defaultUseCache:false,
-        defaultFormat:'text'
+        defaultFormat:'text' // json, xml, text, or none
+    };
+    var accept = {
+        json:'application/json; charset=utf-8',
+        xml:'application/xml; charset=utf-8',
+        text:'text/plain; charset=utf-8'
+    };
+    var contentType = {
+        json:'application/json; charset=utf-8',
+        xml:'application/xml',
+        formUrlencoded:'application/x-www-form-urlencoded'
     };
 
     var queue = fu.lib.createQueue(
         function send(params) {
+            var data = formatData(params.format, params.data);
+                        
             http.json = null;
             http.xml = null;
+            http.data = null;
+            http.text = null;
             http.status = null;
             http.fromCache = false;
             http.params = params;
 
             xhr.open(params.method, params.url);
-            xhr.send(params.data);
+            if (params.accept) {
+                xhr.setRequestHeader('Accept', params.accept);
+            }
+            if (params.contentType) {
+                xhr.setRequestHeader('Content-Type', params.contentType);
+            }
+            
+            xhr.send(data);
         }
     );
 
     xhr.onload = function() {
         http.status = xhr.status;
-        onload(xhr.responseText);
+        onload(xhr);
         queue.pull();
     };
 
     xhr.onerror = function(e) {
+        http.status = xhr.status;
+        handleResponse(xhr);
         if (http.failure) {
             try {
                 http.failure(e);
@@ -42,8 +65,8 @@ fu.model.http = (function() {
         queue.pull();
     };
 
-    var onload = function(responseString) {
-        handleResponse(responseString);
+    var onload = function(response) {
+        handleResponse(response);
         if (http.complete) {
             try {
                 http.complete();
@@ -53,15 +76,19 @@ fu.model.http = (function() {
         }
     };
 
-    var handleResponse = function(responseString) {
+    var handleResponse = function(response) {
         var params = http.params;
-        var format = fu.lib.defined(params.format, http.defaultFormat);
+        var format = params.format;
         if (format === 'json') {
-            handleJsonResponse(responseString);
+            handleJsonResponse(response.responseText);
         } else if (format === 'xml') {
-            handleXmlResponse(responseString);
+            handleXmlResponse(response.responseText);
         } else if (format === 'text') {
-            handleTextResponse(responseString);
+            handleTextResponse(response.responseText);
+        } else if (format === 'data') {
+            handleDataResponse(response.responseData);
+        } else {
+            handleOtherResponse(response);
         }
     };
 
@@ -82,17 +109,53 @@ fu.model.http = (function() {
         http.xml = Ti.XML.parseString(xmlString);
         cacheIfGetOk(xmlString);
     };
+    
+    var handleDataResponse = function(data) {
+        if (data != null) {
+            http.data = data;
+            cacheIfGetOk(data);
+        }
+    };
+    
+    var handleOtherResponse = function(response) {
+        http.xml = response.responseXML;
+        http.text = response.responseText;
+        http.data = response.responseData;
+    };
 
     var cacheIfGetOk = function(value) {
         var params = http.params;
         var status = http.status;
         if (!http.fromCache && params.method === "GET" && status >= 200 && status <= 299) {
-            fu.model.cache.set(params.url, value, fu.lib.defined(params.expire, http.defaultExpire));
+            fu.model.cache.set(params.url, value, params.expire);
         }
     };
 
     var send = function(params) {
+        Ti.API.info('http_model.send()');
         queue.push(params);
+    };
+    
+    var appendContentTypeHeader = function(params) {
+        var format = params.format;
+        if (format === 'json') {
+            params.contentType = contentType.json;
+        } else if (format === 'xml') {
+            params.contentType = contentType.xml;
+        } else if (format === 'text') {
+            params.contentType = contentType.formUrlencoded;
+        }
+    };
+    
+    var appendAcceptHeader = function(params) {
+        var format = params.format;
+        if (format === 'json') {
+            params.accept = accept.json;
+        } else if (format === 'xml') {
+            params.accept = accept.xml;
+        } else if (format === 'text') {
+            params.accept = accept.text;
+        }
     };
     
     var warnAboutException = function(err) {
@@ -100,11 +163,28 @@ fu.model.http = (function() {
                     'Try to ensure that exceptions are handled within your callback.\n'+
                     'Exception was:\n'+err);
     };
+    
+    var formatData = function(format, data) {
+        if (typeof data === 'string') {
+            return data;
+        }
+        if (format === 'json') {
+            return JSON.stringify(data);
+        }
+        return data;
+    };
+    
+    var applyDefaults = function(params) {
+        params.format = fu.lib.defined(params.format, http.defaultFormat);
+        params.useCache = fu.lib.defined(params.useCache, http.defaultUseCache);
+        params.expire = fu.lib.defined(params.expire, http.defaultExpire);
+    };
 
     http.get = function(params) {
         Ti.API.info("xhr.get");
+        applyDefaults(params);
         params.method = "GET";
-        var useCache = fu.lib.defined(params.useCache, http.defaultUseCache);
+        var useCache = params.useCache;
         Ti.API.info("!!!!!! use cache = "+useCache);
         if (useCache) {
             var cachedData = fu.model.cache.get(params.url);
@@ -117,12 +197,17 @@ fu.model.http = (function() {
                 send(params);
             }
         } else {
+            appendAcceptHeader(params);
             send(params);
         }
     };
 
     http.post = function(params) {
+        Ti.API.info('http_model.post()');
+        applyDefaults(params);
         params.method = "POST";
+        appendAcceptHeader(params);
+        appendContentTypeHeader(params);
         send(params);
     };
 
