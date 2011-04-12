@@ -23,27 +23,25 @@ fu.model.http = (function() {
     };
 
     var queue = fu.lib.createQueue(
-        function send(params) {
-            var data = formatData(params.format, params.data);
-                        
-            http.json = null;
-            http.xml = null;
-            http.data = null;
-            http.text = null;
-            http.status = null;
-            http.fromCache = false;
-            http.params = params;
+            function send(params) {
+                var data = formatData(params.format, params.data);
+                http.json = null;
+                http.xml = null;
+                http.data = null;
+                http.text = null;
+                http.status = null;
+                http.fromCache = false;
+                http.params = params;
 
-            xhr.open(params.method, params.url);
-            if (params.accept) {
-                xhr.setRequestHeader('Accept', params.accept);
+                xhr.open(params.method, params.url);
+                if (params.accept) {
+                    xhr.setRequestHeader('Accept', params.accept);
+                }
+                if (params.contentType) {
+                    xhr.setRequestHeader('Content-Type', params.contentType);
+                }
+                xhr.send(data);
             }
-            if (params.contentType) {
-                xhr.setRequestHeader('Content-Type', params.contentType);
-            }
-            
-            xhr.send(data);
-        }
     );
 
     xhr.onload = function() {
@@ -67,6 +65,10 @@ fu.model.http = (function() {
 
     var onload = function(response) {
         handleResponse(response);
+        complete();
+    };
+
+    var complete = function() {
         if (http.complete) {
             try {
                 http.complete();
@@ -109,14 +111,14 @@ fu.model.http = (function() {
         http.xml = Ti.XML.parseString(xmlString);
         cacheIfGetOk(xmlString);
     };
-    
+
     var handleDataResponse = function(data) {
         if (data != null) {
             http.data = data;
             cacheIfGetOk(data);
         }
     };
-    
+
     var handleOtherResponse = function(response) {
         http.xml = response.responseXML;
         http.text = response.responseText;
@@ -127,7 +129,7 @@ fu.model.http = (function() {
         var params = http.params;
         var status = http.status;
         if (!http.fromCache && params.method === "GET" && status >= 200 && status <= 299) {
-            fu.model.cache.set(params.url, value, params.expire);
+            fu.model.cache.set(params.url, JSON.stringify(http), params.expire);
         }
     };
 
@@ -135,7 +137,7 @@ fu.model.http = (function() {
         Ti.API.info('http_model.send()');
         queue.push(params);
     };
-    
+
     var appendContentTypeHeader = function(params) {
         var format = params.format;
         if (format === 'json') {
@@ -146,7 +148,7 @@ fu.model.http = (function() {
             params.contentType = contentType.formUrlencoded;
         }
     };
-    
+
     var appendAcceptHeader = function(params) {
         var format = params.format;
         if (format === 'json') {
@@ -157,13 +159,13 @@ fu.model.http = (function() {
             params.accept = accept.text;
         }
     };
-    
+
     var warnAboutException = function(err) {
-        Ti.API.warn('Exception raised in callback. '+
-                    'Try to ensure that exceptions are handled within your callback.\n'+
-                    'Exception was:\n'+err);
+        Ti.API.warn('Exception raised in callback. ' +
+                'Try to ensure that exceptions are handled within your callback.\n' +
+                'Exception was:\n' + err);
     };
-    
+
     var formatData = function(format, data) {
         if (typeof data === 'string') {
             return data;
@@ -173,7 +175,7 @@ fu.model.http = (function() {
         }
         return data;
     };
-    
+
     var applyDefaults = function(params) {
         params.format = fu.lib.defined(params.format, http.defaultFormat);
         params.useCache = fu.lib.defined(params.useCache, http.defaultUseCache);
@@ -181,19 +183,24 @@ fu.model.http = (function() {
     };
 
     http.get = function(params) {
-        Ti.API.info("xhr.get");
+        Ti.API.info("http_model.get()");
         applyDefaults(params);
         appendAcceptHeader(params);
         params.method = "GET";
         var useCache = params.useCache;
-        Ti.API.info("!!!!!! use cache = "+useCache);
+        Ti.API.info("!!!!!! use cache = " + useCache);
         if (useCache) {
-            var cachedData = fu.model.cache.get(params.url);
-            if (cachedData) {
-                http.status = 200;
-                http.params = params;
+            var cachedHttp = JSON.parse(fu.model.cache.get(params.url));
+            if (cachedHttp) {
+                //Ti.API.info("cachedHttp = "+JSON.stringify(cachedHttp));
+                http.json = cachedHttp.json;
+                http.xml = cachedHttp.xml;
+                http.data = cachedHttp.data;
+                http.text = cachedHttp.text;
+                http.status = cachedHttp.status;
                 http.fromCache = true;
-                onload(cachedData);
+                http.params = params;
+                complete();
             } else {
                 send(params);
             }
