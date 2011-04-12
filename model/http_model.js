@@ -161,9 +161,9 @@ fu.model.http = (function() {
     };
 
     var warnAboutException = function(err) {
-        Ti.API.warn('Exception raised in callback. ' +
-                'Try to ensure that exceptions are handled within your callback.\n' +
-                'Exception was:\n' + err);
+        Ti.API.warn('Exception raised in callback. '+
+                    'Try to ensure that exceptions are handled within your callback.\n'+
+                    'Exception was:\n'+JSON.stringify(err));
     };
 
     var formatData = function(format, data) {
