@@ -54,7 +54,7 @@ fu.model.http = (function() {
 
     xhr.onerror = function(e) {
         http.status = xhr.status;
-        handleResponse(xhr);
+        handleOtherResponse(xhr);
         if (http.failure) {
             try {
                 http.failure(e);
@@ -183,6 +183,7 @@ fu.model.http = (function() {
     http.get = function(params) {
         Ti.API.info("xhr.get");
         applyDefaults(params);
+        appendAcceptHeader(params);
         params.method = "GET";
         var useCache = params.useCache;
         Ti.API.info("!!!!!! use cache = "+useCache);
@@ -197,7 +198,6 @@ fu.model.http = (function() {
                 send(params);
             }
         } else {
-            appendAcceptHeader(params);
             send(params);
         }
     };
