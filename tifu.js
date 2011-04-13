@@ -1,4 +1,7 @@
-var fu = {};
+var fu = (function() {
+    return {
+    };
+})();
 
 Ti.include(
         'tifu/lib/lib.js',
