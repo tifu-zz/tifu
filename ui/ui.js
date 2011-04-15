@@ -11,7 +11,8 @@ fu.ui = (function() {
                 height:70,
                 backgroundColor:'#000',
                 borderRadius:10,
-                opacity:0.8
+                opacity:0.8,
+                visible:false
             });
             var activityIndicator = Titanium.UI.createActivityIndicator({
                 style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
