@@ -6,5 +6,6 @@ var fu = (function() {
 Ti.include(
         'tifu/lib/lib.js',
         'tifu/ui/ui.js',
-        'tifu/model/model.js'
+        'tifu/model/model.js',
+        'tifu/orchestrator/orchestrator.js'
 );
