@@ -1,5 +1,31 @@
 fu.ui = (function() {
     var ui = {
+        createTableView:function(options) {
+            var tableView = Ti.UI.createTableView(options);
+            var loadingIndicator = fu.ui.createLoadingView();
+            tableView.add(loadingIndicator);
+
+            tableView.load = function(buildData) {
+                tableView.showLoading();
+                var data = buildData();
+                tableView.hideLoading();
+                tableView.setData(data);
+                tableView.scrollToTop(0, {animated:true});
+            };
+
+            tableView.showLoading = function() {
+                tableView.setData([]);
+                loadingIndicator.showLoading();
+            };
+
+            tableView.hideLoading = function() {
+                loadingIndicator.hideLoading();
+                if (tableView.endLoading) {
+                    tableView.endLoading();
+                }
+            };
+            return tableView;
+        },
         createLoadingView:function(options) {
             options = options || {};
             var modal = options.modal || false;
