@@ -9,7 +9,8 @@ fu.model.http = (function() {
         xhr:xhr,
         defaultExpire:60,
         defaultUseCache:false,
-        defaultFormat:'text' // json, xml, text, or none
+        defaultFormat:'text', // json, xml, text, or none
+		logEnabled:false
     };
     var accept = {
         json:'application/json; charset=utf-8',
@@ -100,7 +101,7 @@ fu.model.http = (function() {
     };
 
     var handleJsonResponse = function(jsonString) {
-        Ti.API.info("!!onload json = " + jsonString);
+        log("!!onload json = " + jsonString);
         if (jsonString != null && jsonString.trim() != "") {
             http.json = JSON.parse(jsonString);
             cacheIfGetOk(jsonString);
@@ -134,7 +135,7 @@ fu.model.http = (function() {
     };
 
     var send = function(params) {
-        Ti.API.info('http_model.send()');
+        log('http_model.send()');
         queue.push(params);
     };
 
@@ -160,6 +161,12 @@ fu.model.http = (function() {
         }
     };
 
+	var log = function(message) {
+		if(http.logEnabled) {
+			Ti.API.info(message);
+		}
+	};
+
     var warnAboutException = function(err) {
         Ti.API.warn('Exception raised in callback. '+
                     'Try to ensure that exceptions are handled within your callback.\n'+
@@ -183,16 +190,16 @@ fu.model.http = (function() {
     };
 
     http.get = function(params) {
-        Ti.API.info("http_model.get()");
+        log("http_model.get()");
         applyDefaults(params);
         appendAcceptHeader(params);
         params.method = "GET";
         var useCache = params.useCache;
-        Ti.API.info("!!!!!! use cache = " + useCache);
+        log("!!!!!! use cache = " + useCache);
         if (useCache) {
             var cachedHttp = JSON.parse(fu.model.cache.get(params.url));
             if (cachedHttp) {
-                //Ti.API.info("cachedHttp = "+JSON.stringify(cachedHttp));
+                //log("cachedHttp = "+JSON.stringify(cachedHttp));
                 http.json = cachedHttp.json;
                 http.xml = cachedHttp.xml;
                 http.data = cachedHttp.data;
@@ -210,7 +217,7 @@ fu.model.http = (function() {
     };
 
     http.post = function(params) {
-        Ti.API.info('http_model.post()');
+        log('http_model.post()');
         applyDefaults(params);
         params.method = "POST";
         appendAcceptHeader(params);

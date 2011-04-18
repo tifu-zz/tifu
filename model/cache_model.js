@@ -1,12 +1,20 @@
 fu.model.cache = (function() {
-    var cache = {};
+    var cache = {
+		logEnabled:false
+	};
+	
+	var log = function(message) {
+		if(cache.logEnabled) {
+			Ti.API.info(message);
+		}
+	};
 
     cache.set = function(key, value, mins) {
         var d = new Date();
         var expireTime = d.getTime() + (1000 * 60 * mins);
         var data = {'expire':expireTime,'json':value};
-        Ti.API.info("SETTING with expireTime = " + expireTime);
-        Titanium.API.info('SETTING ' + key + ' in cache for mins = ' + mins);
+        log("SETTING with expireTime = " + expireTime);
+        log('SETTING ' + key + ' in cache for mins = ' + mins);
         Titanium.App.Properties.setString(key, JSON.stringify(data));
     };
 
@@ -22,25 +30,25 @@ fu.model.cache = (function() {
                 cache.remove(key);
                 return null;
             }
-            Ti.API.info("expireTime = " + expireTime);
-            Ti.API.info("nowMS = " + nowMS);
+            log("expireTime = " + expireTime);
+            log("nowMS = " + nowMS);
 
-            Titanium.API.info('GETTING ' + key + ' from cache remaining mins = ' + ((expireTime - nowMS) / 60000));
+            log('GETTING ' + key + ' from cache remaining mins = ' + ((expireTime - nowMS) / 60000));
             return obj;
         }
         else {
-            Titanium.API.info(key + ' NOT found in cache');
+            log(key + ' NOT found in cache');
             return null;
         }
     };
 
     cache.remove = function(key) {
-        Titanium.API.info('REMOVING ' + key + ' from cache');
+        log('REMOVING ' + key + ' from cache');
         Titanium.App.Properties.removeProperty(key);
     };
 
     cache.removeAll = function() {
-        Titanium.API.info('REMOVING ALL');
+        log('REMOVING ALL');
         var props = Titanium.App.Properties.listProperties();
         for (var c = 0; c < props.length; c++) {
             cache.remove(props[c]);
@@ -48,7 +56,7 @@ fu.model.cache = (function() {
     };
 
     cache.clean = function() {
-        Titanium.API.info('CLEAN');
+        log('CLEAN');
         var props = Titanium.App.Properties.listProperties();
         for (var c = 0; c < props.length; c++) {
             var value = Titanium.App.Properties.getString(props[c]);
