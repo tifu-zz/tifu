@@ -35,11 +35,11 @@ fu.model.http = (function() {
                 http.params = params;
 
                 xhr.open(params.method, params.url);
-                if (params.accept) {
-                    xhr.setRequestHeader('Accept', params.accept);
-                }
-                if (params.contentType) {
-                    xhr.setRequestHeader('Content-Type', params.contentType);
+                var headers = params.requestHeaders || {};
+                for (var header in headers) {
+                    if (headers.hasOwnProperty(header)) {
+                        xhr.setRequestHeader(header, headers[header]);
+                    }
                 }
                 xhr.send(data);
             }
@@ -138,27 +138,38 @@ fu.model.http = (function() {
         log('http_model.send()');
         queue.push(params);
     };
+    
+    var setRequestHeader = function(params, key, value) {
+        if (params.requestHeaders == null) {
+            params.requestHeaders = {};
+        }
+        params.requestHeaders[key] = value;
+    };
 
     var appendContentTypeHeader = function(params) {
-        var format = params.format;
+        var format = params.format,
+            headerValue;
         if (format === 'json') {
-            params.contentType = contentType.json;
+            headerValue = contentType.json;
         } else if (format === 'xml') {
-            params.contentType = contentType.xml;
+            headerValue = contentType.xml;
         } else if (format === 'text') {
-            params.contentType = contentType.formUrlencoded;
+            headerValue = contentType.formUrlencoded;
         }
+        setRequestHeader(params, 'Content-Type', headerValue);
     };
 
     var appendAcceptHeader = function(params) {
-        var format = params.format;
+        var format = params.format,
+            headerValue;
         if (format === 'json') {
-            params.accept = accept.json;
+            headerValue = accept.json;
         } else if (format === 'xml') {
-            params.accept = accept.xml;
+            headerValue = accept.xml;
         } else if (format === 'text') {
-            params.accept = accept.text;
+            headerValue = accept.text;
         }
+        setRequestHeader(params, 'Accept', headerValue);
     };
 
 	var log = function(message) {
