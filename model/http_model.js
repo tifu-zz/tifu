@@ -190,11 +190,11 @@ fu.model.http = (function() {
     };
 
     http.get = function(params) {
-        log("http_model.get()");
         applyDefaults(params);
         appendAcceptHeader(params);
         params.method = "GET";
         var useCache = params.useCache;
+        log('http_model.get(' + JSON.stringify(params) + ')');
         log("!!!!!! use cache = " + useCache);
         if (useCache) {
             var cachedHttp = JSON.parse(fu.model.cache.get(params.url));
@@ -217,11 +217,11 @@ fu.model.http = (function() {
     };
 
     http.post = function(params) {
-        log('http_model.post()');
         applyDefaults(params);
         params.method = "POST";
         appendAcceptHeader(params);
         appendContentTypeHeader(params);
+        log('http_model.post(' + JSON.stringify(params) + ')');
         send(params);
     };
 
