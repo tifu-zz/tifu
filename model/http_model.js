@@ -7,11 +7,14 @@ fu.model.http = (function() {
 
     var http = {
         xhr:xhr,
-        defaultExpire:60,
+        defaultExpire:600,
         defaultUseCache:false,
         defaultFormat:'text', // json, xml, text, or none
 		logEnabled:false
     };
+    
+    var cache = fu.lib.createCache('tifu_http');
+    
     var accept = {
         json:'application/json; charset=utf-8',
         xml:'application/xml; charset=utf-8',
@@ -30,6 +33,7 @@ fu.model.http = (function() {
                 http.xml = null;
                 http.data = null;
                 http.text = null;
+                http.responseHeaders = null;
                 http.status = null;
                 http.fromCache = false;
                 http.params = params;
@@ -47,6 +51,8 @@ fu.model.http = (function() {
 
     xhr.onload = function() {
         http.status = xhr.status;
+        http.responseHeaders = xhr.responseHeaders;
+        
         onload(xhr);
         queue.pull();
     };
@@ -81,7 +87,7 @@ fu.model.http = (function() {
 
     var handleResponse = function(response) {
         var params = http.params;
-        var format = params.format;
+        var format = params.format;        
         if (format === 'json') {
             handleJsonResponse(response.responseText);
         } else if (format === 'xml') {
@@ -93,30 +99,27 @@ fu.model.http = (function() {
         } else {
             handleOtherResponse(response);
         }
+        cacheIfGetOk();
     };
 
     var handleTextResponse = function(textString) {
         http.text = textString;
-        cacheIfGetOk(textString);
     };
 
     var handleJsonResponse = function(jsonString) {
         log("!!onload json = " + jsonString);
         if (jsonString != null && jsonString.trim() != "") {
             http.json = JSON.parse(jsonString);
-            cacheIfGetOk(jsonString);
         }
     };
 
     var handleXmlResponse = function(xmlString) {
         http.xml = Ti.XML.parseString(xmlString);
-        cacheIfGetOk(xmlString);
     };
 
     var handleDataResponse = function(data) {
         if (data != null) {
             http.data = data;
-            cacheIfGetOk(data);
         }
     };
 
@@ -126,11 +129,13 @@ fu.model.http = (function() {
         http.data = response.responseData;
     };
 
-    var cacheIfGetOk = function(value) {
+    var cacheIfGetOk = function() {
         var params = http.params;
         var status = http.status;
+        var key;
         if (!http.fromCache && params.method === "GET" && status >= 200 && status <= 299) {
-            fu.model.cache.set(params.url, JSON.stringify(http), params.expire);
+            key = cacheKey(params.url, params.cacheLabel);
+            cache.put(key, http, params.expire);
         }
     };
 
@@ -199,22 +204,30 @@ fu.model.http = (function() {
         params.useCache = fu.lib.defined(params.useCache, http.defaultUseCache);
         params.expire = fu.lib.defined(params.expire, http.defaultExpire);
     };
+    
+    var cacheKey = function(url, label) {
+        return (label != null) ? url + '_(' + label + ')' : url;
+    };
 
     http.get = function(params) {
+        var useCache, key, cachedHttp;
+        
         applyDefaults(params);
         appendAcceptHeader(params);
         params.method = "GET";
-        var useCache = params.useCache;
+        useCache = params.useCache;
         log('http_model.get(' + JSON.stringify(params) + ')');
         log("!!!!!! use cache = " + useCache);
         if (useCache) {
-            var cachedHttp = JSON.parse(fu.model.cache.get(params.url));
+            key = cacheKey(params.url, params.cacheLabel);
+            cachedHttp = cache.get(key);
             if (cachedHttp) {
-                //log("cachedHttp = "+JSON.stringify(cachedHttp));
+                //log("cachedHttp = "+cachedHttp);
                 http.json = cachedHttp.json;
                 http.xml = cachedHttp.xml;
                 http.data = cachedHttp.data;
                 http.text = cachedHttp.text;
+                http.responseHeaders = cachedHttp.responseHeaders;
                 http.status = cachedHttp.status;
                 http.fromCache = true;
                 http.params = params;
@@ -224,6 +237,8 @@ fu.model.http = (function() {
             }
         } else {
             send(params);
+            // Just in case the database blocks... 
+            cache.remove(params.url+'_*');
         }
     };
 
@@ -234,6 +249,10 @@ fu.model.http = (function() {
         appendContentTypeHeader(params);
         log('http_model.post(' + JSON.stringify(params) + ')');
         send(params);
+    };
+    
+    http.resetCache = function(params) {
+        cache.reset();
     };
 
     return http;
