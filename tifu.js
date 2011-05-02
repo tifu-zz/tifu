@@ -11,6 +11,7 @@ var fu = (function() {
 })();
 
 Ti.include(
+        'tifu/config/config.js',
         'tifu/lib/lib.js',
         'tifu/ui/ui.js',
         'tifu/model/model.js',
