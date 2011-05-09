@@ -11,5 +11,9 @@
             yOffset += objTotalHeight;
         };
 
+		view.currentY = function() {
+			return yOffset;
+		};
+
     };
 })();
