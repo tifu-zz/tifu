@@ -103,7 +103,7 @@ fu.ui = (function() {
 })();
 
 Ti.include(
-    'tifu/ui/pull_to_refresh.js',
-    'tifu/ui/mixin.js',
-    'tifu/ui/image_scroller.js'
+    '/tifu/ui/pull_to_refresh.js',
+    '/tifu/ui/mixin.js',
+    '/tifu/ui/image_scroller.js'
 );

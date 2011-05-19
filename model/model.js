@@ -4,6 +4,6 @@ fu.model = (function() {
 })();
 
 Ti.include(
-        'tifu/model/http_model.js',
-        'tifu/model/cache_model.js'
+        '/tifu/model/http_model.js',
+        '/tifu/model/cache_model.js'
 );
