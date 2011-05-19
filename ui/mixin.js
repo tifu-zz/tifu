@@ -11,5 +11,18 @@
             yOffset += objTotalHeight;
         };
 
+		view.appendOnCreate = function(createFunction, createParams) {
+			var obj = createFunction(createParams.merge({
+	            top:(createParams.top || 0) + yOffset,
+	            left:(createParams.left || 0)
+			}));
+            view.add(obj);
+            yOffset +=  obj.height + (createParams.top || 0);
+		};
+
+		view.currentY = function() {
+			return yOffset;
+		};
+
     };
 })();
