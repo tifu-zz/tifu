@@ -21,7 +21,8 @@
         var imageViews = [];
         var tempImageView = Ti.UI.createImageView({
             zIndex:10,
-            visible:false
+            visible:false,
+			hires:options.hires
         });
         scrollableView.views = imageViews;
         var loadingIndicator = fu.ui.createLoadingView({modal:true});
@@ -99,7 +100,8 @@
             if (imageViews.length < 3) {
                 for (var j = 0; (urls.length > j) && (imageViews.length < (j + 1)) && (imageViews.length < 3); j++) {
                     imageViews.push(Ti.UI.createImageView({
-                        defaultImage:defaultImage
+                        defaultImage:defaultImage,
+						hires:options.hires
                     }));
                 }
                 scrollableView.views = imageViews;
