@@ -1,13 +1,5 @@
 var fu = (function() {
-    return {
-        config: {
-            cache: {
-                logEnabled:true,
-                expirationSeconds:600,
-                sweepIntervalSeconds:60
-            }
-        }
-    };
+    return {};
 })();
 
 Ti.include(

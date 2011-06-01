@@ -8,7 +8,11 @@ fu.config = (function() {
         enableKeepAlive:false
     };
 
-    config.cache = {};
+    config.cache = {
+        logEnabled:true,
+        expirationSeconds:600,
+        sweepIntervalSeconds:60
+    };
 
     return config;
 })();
