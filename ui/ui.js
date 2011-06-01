@@ -70,7 +70,7 @@ fu.ui = (function() {
                 loadingView.hide();
             };
             if (modal) {
-                var window = Titanium.UI.createWindow();
+                var window = Titanium.UI.createWindow({});
                 window.add(loadingView);
 
                 window.showLoading = function() {
