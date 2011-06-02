@@ -11,7 +11,7 @@ fu.config = (function() {
     config.cache = {
         logEnabled:true,
         expirationSeconds:600,
-        sweepIntervalSeconds:60
+        sweepIntervalSeconds:null
     };
 
     return config;
