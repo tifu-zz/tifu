@@ -14,6 +14,15 @@
 		view.currentY = function() {
 			return yOffset;
 		};
+		
+		view.reset = function() {
+		    if (view.children) {
+                view.children.forEach(function(child) {
+                    view.remove(child);
+                });
+            }
+            yOffset = 0;
+		};
 
     };
 })();
