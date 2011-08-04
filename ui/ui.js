@@ -27,18 +27,25 @@ fu.ui = (function() {
             return tableView;
         },
         createLoadingView:function(options) {
-            options = options || {};
-            var modal = options.modal || false;
-            var top = options.top || 102;
+            options = fu.lib.defined(options, {});
+            var modal = fu.lib.defined(options.modal, false);
+            var top = fu.lib.defined(options.top, 102);
+            var backgroundColor = fu.lib.defined(options.backgroundColor, '#000');
+            var height = fu.lib.defined(options.height, 70);
 
             var loadingView = Ti.UI.createView({
                 top:top,
                 width:200,
-                height:70,
-                backgroundColor:'#000',
+                height:height,
+                backgroundColor:backgroundColor,
                 borderRadius:10,
                 opacity:0.8,
                 visible:false
+            });
+            var activityView = Ti.UI.createView({
+                width:200, 
+                height:70,
+                top:0
             });
             var activityIndicator = Titanium.UI.createActivityIndicator({
                 style:Titanium.UI.iPhone.ActivityIndicatorStyle.BIG,
@@ -46,7 +53,7 @@ fu.ui = (function() {
                 height:'auto',
                 width:'auto'
             });
-            loadingView.add(activityIndicator);
+            activityView.add(activityIndicator);
             var loadingLabel = Ti.UI.createLabel({
                 left:75,
                 height:'auto',
@@ -58,7 +65,8 @@ fu.ui = (function() {
                 color:"#fff",
                 text:"Loading..."
             });
-            loadingView.add(loadingLabel);
+            activityView.add(loadingLabel);
+            loadingView.add(activityView);
             loadingView.showLoading = function() {
                 loadingLabel.show();
                 activityIndicator.show();
