@@ -1,3 +1,5 @@
+// fu.config defines default component behaviors
+// components should allow overrides of these settings at creation time
 fu.config = (function() {
     var config = {};
 
