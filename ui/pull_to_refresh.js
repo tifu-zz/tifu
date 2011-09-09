@@ -95,35 +95,39 @@
         };
 
         tableView.addEventListener('scroll', function(e) {
-            var offset = e.contentOffset.y;
-            //Ti.API.info("scroll y offset = "+offset + " dragging = "+e.dragging + " loading="+loading);
-            if (e.dragging && !loading) {
-				var t;
-                if (!pulling && offset <= -65.0) {
-                    pulling = true;
-                    t = Ti.UI.create2DMatrix();
-                    t = t.rotate(-180);
-                    arrow.animate({transform:t,duration:50});
-                    statusLabel.text = "Release to update...";
+            if (e.source === tableView) {
+                var offset = e.contentOffset.y;
+                //Ti.API.info("scroll y offset = "+offset + " dragging = "+e.dragging + " loading="+loading);
+                if (e.dragging && !loading) {
+    				var t;
+                    if (!pulling && offset <= -65.0) {
+                        pulling = true;
+                        t = Ti.UI.create2DMatrix();
+                        t = t.rotate(-180);
+                        arrow.animate({transform:t,duration:50});
+                        statusLabel.text = "Release to update...";
+                    }
+                    else if (pulling && offset > -65.0 && offset < 0) {
+                        pulling = false;
+                        t = Ti.UI.create2DMatrix();
+                        arrow.animate({transform:t,duration:50});
+                        statusLabel.text = "Pull down to update...";
+                    }
                 }
-                else if (pulling && offset > -65.0 && offset < 0) {
-                    pulling = false;
-                    t = Ti.UI.create2DMatrix();
-                    arrow.animate({transform:t,duration:50});
-                    statusLabel.text = "Pull down to update...";
+                if (!e.dragging && loading) {
+                    //tableView.setContentInsets({top:65}, {animated:false});
+                    tableView.scrollToTop(-65, {animated:true});
                 }
-            }
-            if (!e.dragging && loading) {
-                //tableView.setContentInsets({top:65}, {animated:false});
-                tableView.scrollToTop(-65, {animated:true});
             }
         });
 
         tableView.addEventListener('scrollEnd', function(e) {
-            var offset = e.contentOffset.y;
-            //Ti.API.info("!scrollEnd y offset = "+offset);
-            if (pulling && !loading && offset <= -65.0) {
-                tableView.beginLoading();
+            if (e.source === tableView) {
+                var offset = e.contentOffset.y;
+                //Ti.API.info("!scrollEnd y offset = "+offset);
+                if (pulling && !loading && offset <= -65.0) {
+                    tableView.beginLoading();
+                }
             }
         });
     };
