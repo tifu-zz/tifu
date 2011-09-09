@@ -95,7 +95,7 @@ fu.ui = (function() {
             return loadingView;
         },
         formatDateYearTime:function(date) {
-            var datestr = date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear();
+            var datestr = (date.getMonth()+1) + '/' + date.getDate() + '/' + date.getFullYear();
             var hours = date.getHours();
             var mins = date.getMinutes();
             if (hours >= 12) {
