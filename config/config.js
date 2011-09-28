@@ -16,5 +16,11 @@ fu.config = (function() {
         sweepIntervalSeconds:null
     };
 
+    config.logger = {
+	    // valid logging levels: all, debug, info, warn, error, none
+        deviceLoggingLevel:'none',
+        simulatorLoggingLevel:'all'
+    };
+
     return config;
 })();
